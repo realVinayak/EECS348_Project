@@ -12,13 +12,13 @@ using namespace std;
 // 2 + 9 --> 2 9 +
 // 3 * 4 --> 3 4 *
 // 9 % 3 --> 9 3 %
-// 1 / 4 --> 1 4 /
+// 100 / 4 --> 1 4 /
 // 2 ^ ( 3 + 4 ) --> 2 3 4 + ^
 // 9 * ( 8 % 2 ) + 6 --> 9 8 2 % * 6 +
 // 2 + 4 / 5 * ( 5 - 3 ) ^ 5 ^ 4 --> 2 4 5 / 5 3 - 5 ^ 4 ^ * +
 // 1 + 9 - 7 * ( 4 / 2 ) --> 1 9 + 7 4 2 / * -
 
-stack<string> make_postfix_stack_for_strings(string postfix_expr) // using strings
+stack<string> make_postfix_stack_for_strings(string postfix_expr, bool test) // using strings
 {
     stack<string> stack;
 
@@ -34,7 +34,7 @@ stack<string> make_postfix_stack_for_strings(string postfix_expr) // using strin
 
         if (isdigit(postfix_expr[i])) // sorry vinny, i know you wanted to have nice loops, they get out of hand so fast...
         {
-            int tokenlength = 0; // length of the current token. i.e. 1 has a tokenlength of 1, 10 has a tokenlength of 2.
+            int tokenlength = 1; // length of the current token. i.e. 1 has a tokenlength of 1, 10 has a tokenlength of 2.
             if (postfix_expr[i + 1] != ' ')
             {
                 for (int j = i + 1; j < str_length; j++) // this loop is for finding the length of the current token. the length of the current token is the difference between the start of the token and the next space.
@@ -46,6 +46,13 @@ stack<string> make_postfix_stack_for_strings(string postfix_expr) // using strin
                     tokenlength++; // this token has a length of <tokenlength>
                 }
                 stack.push(postfix_expr.substr(i, i + tokenlength)); // then we push the length of the token
+                cout << endl
+                     << endl
+                     << endl
+                     << postfix_expr.substr(i, i + tokenlength) << endl
+                     << endl
+                     << endl;
+                i += tokenlength - 1;
             }
             else
             {
@@ -57,11 +64,18 @@ stack<string> make_postfix_stack_for_strings(string postfix_expr) // using strin
             stack.push(string(1, postfix_expr[i])); // pushing tokens that are operators
         }
         // for testing purposes
-        cout << stack.top() << " ";
+        if (test == true)
+        {
+            cout << stack.top() << " ";
+        }
     }
     // for testing purposes.
-    cout << endl
-         << "size = " << stack.size();
+
+    if (test == true)
+    {
+        cout << endl
+             << "size = " << stack.size() << endl;
+    }
     // comment out the tests if you're not testing.
 
     return stack;
@@ -72,7 +86,7 @@ int main()
     string postfix1 = "2 9 +";
     string postfix2 = "3 4 *";
     string postfix3 = "9 3 %";
-    string postfix4 = "1 5 /";
+    string postfix4 = "100 5 /";
     string postfix5 = "2 3 4 + ^";
     string postfix6 = "9 8 2 % * 6 +";
     string postfix7 = "2 4 5 / 5 3 - 5 ^ 4 ^ * +";
@@ -82,14 +96,14 @@ int main()
     // this is why i used strings. see the note below about converting characters to strings and strings to floats.
     // see note below about string stuff
 
-    stack<string> a = make_postfix_stack_for_strings(postfix1);
-    stack<string> b = make_postfix_stack_for_strings(postfix2);
-    stack<string> c = make_postfix_stack_for_strings(postfix3);
-    stack<string> d = make_postfix_stack_for_strings(postfix4);
-    stack<string> e = make_postfix_stack_for_strings(postfix5);
-    stack<string> f = make_postfix_stack_for_strings(postfix6);
-    stack<string> g = make_postfix_stack_for_strings(postfix7);
-    stack<string> h = make_postfix_stack_for_strings(postfix8);
+    stack<string> a = make_postfix_stack_for_strings(postfix1, true);
+    stack<string> b = make_postfix_stack_for_strings(postfix2, true);
+    stack<string> c = make_postfix_stack_for_strings(postfix3, true);
+    stack<string> d = make_postfix_stack_for_strings(postfix4, true);
+    stack<string> e = make_postfix_stack_for_strings(postfix5, true);
+    stack<string> f = make_postfix_stack_for_strings(postfix6, true);
+    stack<string> g = make_postfix_stack_for_strings(postfix7, true);
+    stack<string> h = make_postfix_stack_for_strings(postfix8, true);
 
     return 0;
 }
