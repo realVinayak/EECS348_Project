@@ -95,6 +95,7 @@ int main() {
 
 	stack<string> new_stack;
 
+//Some like this get the wrong output because we're using ints and not floats (I think we were told this is fine though?)
 //	new_stack.push("2");
 //	new_stack.push("4");
 //	new_stack.push("5");
