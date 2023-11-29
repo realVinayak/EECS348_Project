@@ -20,7 +20,7 @@ bool is_operator(string item) {
 	return false;
 }
 
-int do_operation(string the_operator, int num1, int num2) {
+double do_operation(string the_operator, double num1, double num2) {
 	//Does simple arithmetic operation on two numbers, given the operator. If the operator is not listed, this function returns 0.
 	if (the_operator == "*")
 		return (num2 * num1);
@@ -31,14 +31,14 @@ int do_operation(string the_operator, int num1, int num2) {
 	if (the_operator == "-")
 		return (num2 - num1);
 	if (the_operator == "%")
-		return (num2 % num1);
+		return ((int)num2 % (int)num1);
 	if (the_operator == "^")
 		return (pow(num2, num1));
 	cout << "Operator missing from function" << endl;	
 	return 0;
 }
 
-int evaluate_stack(stack<string> postfix_stack) {
+double evaluate_stack(stack<string> postfix_stack) {
 
 	stack<string> reversed_stack;
 	//We have to reverse the stack because I think it might be backwards coming from stack_loading
@@ -48,14 +48,14 @@ int evaluate_stack(stack<string> postfix_stack) {
 	} while (postfix_stack.size() > 0);
 
 	//When we pop numbers off the stack to work on, we put them in here.
-	int num1;
-	int num2;
+	double num1;
+	double num2;
 
 	//Value stack and "current" variables to make things hopefully more readable
 	stack<string> value_stack;
 	string current_item;
 	string current_operator;
-	int result;
+	double result;
 
 	while (reversed_stack.size() > 0) {
 		
@@ -69,12 +69,11 @@ int evaluate_stack(stack<string> postfix_stack) {
 			current_operator = current_item;
 
 			//Pop top two numbers
-			num1 = stoi(value_stack.top());
+			num1 = stod(value_stack.top());
 			value_stack.pop();
 
-			num2 = stoi(value_stack.top());
+			num2 = stod(value_stack.top());
 			value_stack.pop();
-
 			//We do the operation with the two numbers and the operator and get the result
 			result = do_operation(current_operator, num1, num2);
 
@@ -88,7 +87,7 @@ int evaluate_stack(stack<string> postfix_stack) {
 	}
 
 	//If the reverse stack size is zero, then there are no operators left and we must be left with the answer in the value stack assuming the expression is valid
-	return stoi(value_stack.top());
+	return stod(value_stack.top());
 }
 
 int main() {
@@ -116,14 +115,18 @@ int main() {
 //	new_stack.push("*");
 //	new_stack.push("+");
 
-	new_stack.push("3");
-	new_stack.push("4");
-	new_stack.push("*");
-	new_stack.push("2");
-	new_stack.push("5");
-	new_stack.push("*");
-	new_stack.push("-");
+	//new_stack.push("4");
+	//new_stack.push("4");
+	//new_stack.push("*");
+	//new_stack.push("2");
+	//new_stack.push("5");
+	//new_stack.push("*");
+	//new_stack.push("-");
 
+	//Testing to make sure double works fine instead of int
+	new_stack.push("7");
+	new_stack.push("5");
+	new_stack.push("/");
 
 	cout << evaluate_stack(new_stack) << endl;
 
