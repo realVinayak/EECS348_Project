@@ -5,77 +5,93 @@
 #include <vector>
 #include <utility>
 
-std::string infixToPostfix(const std::string& infix) {
-    std::stack<char> stack;  // stack to hold operators and parentheses
-    std::string postfix;     // string to store the resulting postfix expression
+void infixToPostfix(std::vector<std::string> &infix_array, std::vector<std::string> &postfix) {
+    std::stack<std::string> stack;  // stack to hold operators and parentheses
+
+    auto isValidNumber = [](std::string token)->bool{
+        return isdigit(token[0]);
+    };
 
     // lambda to check if a character is an operator
-    auto isOperator = [](char c) -> bool {
-        return c == '+' || c == '-' || c == '*' || c == '/' || c == '^' || c == '%';
+    auto isOperator = [](std::string c) -> bool {
+        return c == "+" || c == "-" || c == "*" || c == "/" || c == "^" || c == "%" || c == "u";
     };
 
     // lambda to determine the precedence of operators
-    auto precedence = [](char c) -> int {
-        if (c == '+' || c == '-') return 1;
-        if (c == '*' || c == '/' || c == '%') return 2;
-        if (c == '^') return 3;
+    auto precedence = [](std::string c) -> int {
+        if (c == "+" || c == "-") return 1;
+        if (c == "*" || c == "/" || c == "%") return 2;
+        if (c == "^") return 3;
+        if (c == "u") return 4;
         return 0;
     };
 
-    for (size_t i = 0; i < infix.length(); ++i) {
-        char c = infix[i];
+    auto associativity = [](std::string op)->bool{
+        if (op == "+" || op == "-" || op =="*" || op == "/" || op == "%") return true;
+        return false;
+    };
 
-        // handling numbers (including multi-digit and floating-point)
-        if (isdigit(c) || (c == '.' && i + 1 < infix.length() && isdigit(infix[i + 1]))) {
-            if (!postfix.empty() && postfix.back() != ' ') {
-                postfix += ' '; // Add a space before number
-            }
-            postfix += c;
-            // append following digits or a single decimal point to form a complete number
-            while (i + 1 < infix.length() && (isdigit(infix[i + 1]) || infix[i + 1] == '.')) {
-                i++;
-                postfix += infix[i];
-            }
+    auto handleToken = [isValidNumber, isOperator, precedence, &postfix, associativity, &stack](std::string token) -> int {
+        if (isValidNumber(token)){
+            postfix.push_back(token);
+            return 0;
         }
-        // handle operators
-        else if (isOperator(c)) {
-            while (!stack.empty() && precedence(stack.top()) >= precedence(c)) {
-                postfix += ' ';
-                postfix += stack.top();
+        if (isOperator(token)){
+            std::string current_op = token;
+            while (!stack.empty() && token != "(" && (
+                    precedence(stack.top()) > precedence(token) ||
+                    (precedence(stack.top()) == precedence(token)
+                    && (associativity(token))
+                    ))) {
+                postfix.push_back(stack.top());
                 stack.pop();
             }
-            stack.push(c);
+            stack.push(token);
+            return 0;
         }
-        // handle parentheses
-        else if (c == '(') {
-            stack.push(c);
+        if (token == "(")
+        {
+            stack.push(token);
+            return 0;
         }
-        else if (c == ')') {
-            while (!stack.empty() && stack.top() != '(') {
-                postfix += ' ';
-                postfix += stack.top();
+        if (token == ")"){
+            while (!stack.empty() && stack.top() != "(") {
+                postfix.push_back(stack.top());
                 stack.pop();
             }
-            stack.pop(); // pop the '('
+            if (stack.empty()) return 1;
+            stack.pop();
+            return 0;
         }
+        return 1;
+
+    };
+
+    std::string prevToken = "\0";
+    for (size_t i = 0; i < infix_array.size(); ++i) {
+        std::string token = infix_array.at(i);
+        int response;
+        if (token == "-" && (prevToken == "\0" || prevToken == "(" || isOperator(prevToken))){
+            response = handleToken("u");
+        }
+        else {
+            response = handleToken(token);
+        }
+        if (response != 0){
+            std::cerr << "Error in generating Reverse Polish Notation";
+            exit(-1);
+        }
+        prevToken = token;
     }
 
     // pop any remaining operators from the stack
     while (!stack.empty()) {
-        postfix += ' ';
-        postfix += stack.top();
+        if (stack.top() == "(")
+        {
+            std::cerr << "Error in generating Reverse Polish Notation. Didn't expect trailing (";
+            exit(-1);
+        }
+        postfix.push_back(stack.top());
         stack.pop();
     }
-
-    return postfix;
-}
-
-// example for using the function
-int main() {
-    std::string infix;
-    std::cout << "Enter infix expression: ";
-    std::getline(std::cin, infix);
-    std::string postfix = infixToPostfix(infix);
-    std::cout << "Postfix expression: " << postfix << std::endl;
-    return 0;
 }

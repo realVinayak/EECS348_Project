@@ -9,7 +9,7 @@ using namespace std;
 bool is_operator(string item) {
 	//Checks to see if item is in operators array
 	
-	string operators[] = {"^", "*", "/", "+", "-", "%"};
+	string operators[] = {"^", "*", "/", "+", "-", "%", "u"};
 	int operators_size = sizeof(operators)/sizeof(operators[0]);
 
 	for (int i = 0; i < operators_size; i++) {
@@ -67,18 +67,25 @@ double evaluate_stack(stack<string> postfix_stack) {
 			//Then it's an operator
 			//Just to make things more readable, if we're in this else clause then it is implied that the current item is an operator.
 			current_operator = current_item;
+            if (current_operator == "u"){
+                result = -1*stod(value_stack.top());
+                value_stack.pop();
+            }else{
+                //Pop top two numbers
+                if (value_stack.size() < 2){
+                    std::cerr << "Error in evaluating expression";
+                    exit(1);
+                }
+                num1 = stod(value_stack.top());
+                value_stack.pop();
 
-			//Pop top two numbers
-			num1 = stod(value_stack.top());
-			value_stack.pop();
-
-			num2 = stod(value_stack.top());
-			value_stack.pop();
-			//We do the operation with the two numbers and the operator and get the result
-			result = do_operation(current_operator, num1, num2);
-
-			//Push the simplified result to the value stack for next operation
-			value_stack.push(to_string(result));
+                num2 = stod(value_stack.top());
+                value_stack.pop();
+                //We do the operation with the two numbers and the operator and get the result
+                result = do_operation(current_operator, num1, num2);
+            }
+            //Push the simplified result to the value stack for next operation
+            value_stack.push(to_string(result));
 
 		}
 		//We read one token at a time, we've read this token so we get rid of it.
@@ -88,47 +95,4 @@ double evaluate_stack(stack<string> postfix_stack) {
 
 	//If the reverse stack size is zero, then there are no operators left and we must be left with the answer in the value stack assuming the expression is valid
 	return stod(value_stack.top());
-}
-
-int main() {
-
-	stack<string> new_stack;
-
-//Some like this get the wrong output because we're using ints and not floats (I think we were told this is fine though?)
-//	new_stack.push("2");
-//	new_stack.push("4");
-//	new_stack.push("5");
-//	new_stack.push("/");
-//	new_stack.push("5");
-//	new_stack.push("3");
-//	new_stack.push("-");
-//	new_stack.push("5");
-//	new_stack.push("^");
-//	new_stack.push("4");
-//	new_stack.push("^");
-//	new_stack.push("*");
-//	new_stack.push("+");
-
-//	new_stack.push("2");
-//	new_stack.push("3");
-//	new_stack.push("4");
-//	new_stack.push("*");
-//	new_stack.push("+");
-
-	//new_stack.push("4");
-	//new_stack.push("4");
-	//new_stack.push("*");
-	//new_stack.push("2");
-	//new_stack.push("5");
-	//new_stack.push("*");
-	//new_stack.push("-");
-
-	//Testing to make sure double works fine instead of int
-	new_stack.push("7");
-	new_stack.push("5");
-	new_stack.push("/");
-
-	cout << evaluate_stack(new_stack) << endl;
-
-	return 0;
 }
