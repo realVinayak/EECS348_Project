@@ -24,14 +24,28 @@ double do_operation(string the_operator, double num1, double num2) {
 	//Does simple arithmetic operation on two numbers, given the operator. If the operator is not listed, this function returns 0.
 	if (the_operator == "*")
 		return (num2 * num1);
-	if (the_operator == "/")
-		return (num2 / num1);
+	if (the_operator == "/"){
+
+        double result = (num2 / num1);
+        if (!isfinite(result)){
+            std::cerr << "Invalid result from division";
+            exit(1);
+        }
+        return result;
+    }
+
 	if (the_operator == "+")
 		return (num2 + num1);
 	if (the_operator == "-")
 		return (num2 - num1);
-	if (the_operator == "%")
-		return ((int)num2 % (int)num1);
+	if (the_operator == "%"){
+        if ((int)num1 != 0){
+            return ((int)num2 % (int)num1);
+        }
+        std::cerr << "Invalid result from division";
+        exit(1);
+    }
+
 	if (the_operator == "^")
 		return (pow(num2, num1));
 	cout << "Operator missing from function" << endl;	
