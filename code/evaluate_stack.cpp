@@ -9,7 +9,7 @@ using namespace std;
 bool is_operator(string item) {
 	//Checks to see if item is in operators array
 	
-	string operators[] = {"^", "*", "/", "+", "-", "%", "u"};
+	string operators[] = {"^", "*", "/", "+", "-", "%", "u", "p"};
 	int operators_size = sizeof(operators)/sizeof(operators[0]);
 
 	for (int i = 0; i < operators_size; i++) {
@@ -28,7 +28,7 @@ double do_operation(string the_operator, double num1, double num2) {
 
         double result = (num2 / num1);
         if (!isfinite(result)){
-            std::cerr << "Invalid result from division";
+            std::cerr << "Invalid result from division\n";
             exit(1);
         }
         return result;
@@ -42,7 +42,7 @@ double do_operation(string the_operator, double num1, double num2) {
         if ((int)num1 != 0){
             return ((int)num2 % (int)num1);
         }
-        std::cerr << "Invalid result from division";
+        std::cerr << "Invalid result from division\n";
         exit(1);
     }
 
@@ -70,26 +70,42 @@ double evaluate_stack(stack<string> postfix_stack) {
 	string current_item;
 	string current_operator;
 	double result;
-
+    int numbers_pending_operation = 0;
 	while (reversed_stack.size() > 0) {
 		
 		current_item = reversed_stack.top(); //Reading from our reversed "input" stack, just like we're reading in tokens from a string
 
-		if (!is_operator(current_item)) { 
+		if (!is_operator(current_item)) {
+            ++numbers_pending_operation;
 			value_stack.push(current_item); //Then it's a number
 		} else { 
 			//Then it's an operator
 			//Just to make things more readable, if we're in this else clause then it is implied that the current item is an operator.
 			current_operator = current_item;
             if (current_operator == "u"){
+                if (value_stack.empty()){
+                    std::cerr << "Error in evaluating expression\n";
+                    exit(1);
+                }
                 result = -1*stod(value_stack.top());
                 value_stack.pop();
+                --numbers_pending_operation;
+            }else if (current_operator == "p")
+            {
+                if (value_stack.empty()){
+                    std::cerr << "Error in evaluating expression\n";
+                    exit(1);
+                }
+                result = stod(value_stack.top());
+                value_stack.pop();
+                --numbers_pending_operation;
             }else{
                 //Pop top two numbers
                 if (value_stack.size() < 2){
-                    std::cerr << "Error in evaluating expression";
+                    std::cerr << "Error in evaluating expression\n";
                     exit(1);
                 }
+                numbers_pending_operation -= 2;
                 num1 = stod(value_stack.top());
                 value_stack.pop();
 
@@ -106,6 +122,11 @@ double evaluate_stack(stack<string> postfix_stack) {
 		reversed_stack.pop();
 
 	}
+
+    if (numbers_pending_operation > 0){
+       std :: cerr << "Error: Invalid expression. Please check if operators are defined for sequences\n";
+       exit(1);
+    }
 
 	//If the reverse stack size is zero, then there are no operators left and we must be left with the answer in the value stack assuming the expression is valid
 	return stod(value_stack.top());

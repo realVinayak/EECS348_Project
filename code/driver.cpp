@@ -18,6 +18,6 @@ int main(){
         //std :: cout << "At " << i << " " << postfix_vector.at(i) << std::endl;
         postfix_stack.push(postfix_vector.at(i));
     }
-    std::cout << "Result: " << evaluate_stack(postfix_stack);
+    std::cout << "Result: " << evaluate_stack(postfix_stack) << std :: endl;
 
 }

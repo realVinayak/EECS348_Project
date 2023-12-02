@@ -14,7 +14,7 @@ void infixToPostfix(std::vector<std::string> &infix_array, std::vector<std::stri
 
     // lambda to check if a character is an operator
     auto isOperator = [](std::string c) -> bool {
-        return c == "+" || c == "-" || c == "*" || c == "/" || c == "^" || c == "%" || c == "u";
+        return c == "+" || c == "-" || c == "*" || c == "/" || c == "^" || c == "%" || c == "u" || c == "p";
     };
 
     // lambda to determine the precedence of operators
@@ -22,7 +22,7 @@ void infixToPostfix(std::vector<std::string> &infix_array, std::vector<std::stri
         if (c == "+" || c == "-") return 1;
         if (c == "*" || c == "/" || c == "%") return 2;
         if (c == "^") return 3;
-        if (c == "u") return 4;
+        if (c == "u" || c == "p") return 4;
         return 0;
     };
 
@@ -73,12 +73,14 @@ void infixToPostfix(std::vector<std::string> &infix_array, std::vector<std::stri
         int response;
         if (token == "-" && (prevToken == "\0" || prevToken == "(" || isOperator(prevToken))){
             response = handleToken("u");
+        } else if (token == "+" && (prevToken == "\0" || prevToken == "(" || isOperator(prevToken))){
+            response = handleToken("p");
         }
         else {
             response = handleToken(token);
         }
         if (response != 0){
-            std::cerr << "Error in generating Reverse Polish Notation";
+            std::cerr << "Error in generating Reverse Polish Notation\n";
             exit(-1);
         }
         prevToken = token;
@@ -88,7 +90,7 @@ void infixToPostfix(std::vector<std::string> &infix_array, std::vector<std::stri
     while (!stack.empty()) {
         if (stack.top() == "(")
         {
-            std::cerr << "Error in generating Reverse Polish Notation. Didn't expect trailing (";
+            std::cerr << "Error in generating Reverse Polish Notation. Didn't expect trailing (\n";
             exit(-1);
         }
         postfix.push_back(stack.top());

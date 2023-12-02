@@ -36,9 +36,59 @@ std::string convertPowerOperator(const std::string& expression) {       //This l
     return result;      //Returns the resulting expression 
 }
 
+
+bool isComputable(char c){
+    return c == '.' || isdigit(c) || c == '(';
+}
+
+void validate_parsed_vector(std::vector<std::string>&vector){
+    // set bits on what to look for. NUMBER OPERATOR
+    // don't need to set an extra bit for parenthesis since it is always semantically
+    // same as a number
+    bool searching_for[2] = {true, true};
+    int idx = 0;
+    while (idx < vector.size() - 1){
+        char current = vector[idx][0];
+        if (isOperator(current)){
+            if (isComputable(vector[idx+1][0]) == true){
+                idx += 2;
+                continue;
+            }
+            if ((vector[idx+1][0] == '+' || vector[idx+1][0] == '-') && isComputable(vector[idx+2][0]) == true){
+                idx += 2;
+                continue;
+            }
+            std :: cerr << "Error: Input is invalid\n";
+            exit(1);
+        }
+        else if (current == '(') {
+            if(isComputable(vector[idx + 1][0]) ||
+                vector[idx+1][0] == '+' ||
+                vector[idx+1][0] == '-'
+                ){
+                idx += 1;
+                continue;
+            }
+            std::cerr << "Error: Input is invalid\n";
+            exit(1);
+        }
+        else if (isComputable(current)) {
+            //  std :: cout << idx << std :: endl;
+            if (!isOperator(vector[idx + 1][0]) && !(vector[idx+1][0] == ')')) {
+                std::cerr << "Error: Input is invalid\n";
+                exit(1);
+            }else{
+                idx += 2;
+                continue;
+            }
+        }
+            idx++;
+        }
+    }
+
 void tokenize(const std::string &raw_expression, std::vector<std::string>&vector_to_use){
 
-    std::cout << "Original Expression: " << raw_expression << std::endl;       //This prints the originial user expression
+    //std::cout << "Original Expression: " << raw_expression << std::endl;       //This prints the originial user expression
 
     if (!isValidExpression(raw_expression)) {      //This line checks if the expression has valid parentheses
     std::cerr << "Error: Mismatched parentheses in the expression.\n";      //This line displays the error message if it does not have matching parentheses
@@ -75,7 +125,6 @@ void tokenize(const std::string &raw_expression, std::vector<std::string>&vector
         }
         // Will attempt to add a number here
         std::string number_to_add = "";
-
         bool period_added = false;
         while (isdigit(raw_expression[i])
         || (raw_expression[i] == '.' && !period_added)){
@@ -85,9 +134,11 @@ void tokenize(const std::string &raw_expression, std::vector<std::string>&vector
         }
         i--;
         if (number_to_add == ""){
-            std::cerr << "Error: Input is invalid";
+            std::cerr << "Error: Input is invalid\n";
             exit(1);
         }
         vector_to_use.push_back(number_to_add);
     }
+    validate_parsed_vector(vector_to_use);
 }
+
