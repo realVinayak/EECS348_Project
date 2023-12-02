@@ -38,13 +38,14 @@ std::string convertPowerOperator(const std::string& expression) {       //This l
 
 
 bool isComputable(char c){
+    // return true if it could be something that's computable (like number or parenthesis)
     return c == '.' || isdigit(c) || c == '(';
 }
 
+// Performs static analysis to catch invalid cases that won't be caught by Shunting-Yard algorithm
+// For example, 20 50 + is invalid, but not caught by Shunting-Yard as invalid. Instead, this be being
+// caught here
 void validate_parsed_vector(std::vector<std::string>&vector){
-    // set bits on what to look for. NUMBER OPERATOR
-    // don't need to set an extra bit for parenthesis since it is always semantically
-    // same as a number
     if (vector.size() == 0)
         return;
 
@@ -108,17 +109,18 @@ void tokenize(const std::string &raw_expression, std::vector<std::string>&vector
             ++i;
             continue;
         }
-        // Handle i
+        // Handle e
         if (raw_expression[i] == 'e'){
             vector_to_use.push_back("2.71828");
             continue;
         }
+        // ignore white space
         if (raw_expression[i] == '\t' || raw_expression[i] == '\n' || raw_expression[i] == ' ') continue;
         if (raw_expression[i] == '\0'){
             std::cout << "Received EOF. Terminating";
             exit(0);
         }
-
+        // handle parenthesis or valid operators
         if (raw_expression[i] == '(' || raw_expression[i] == ')' || isOperator(raw_expression[i]) == true){
             std::string temp_str = "";
             temp_str += raw_expression[i];
@@ -135,6 +137,7 @@ void tokenize(const std::string &raw_expression, std::vector<std::string>&vector
             ++i;
         }
         i--;
+        // character is not recognized, throw an error
         if (number_to_add == ""){
             std::cerr << "Error: Input is invalid\n";
             exit(1);

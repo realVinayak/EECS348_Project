@@ -10,13 +10,13 @@ int main(){
     std::cout << "Enter an arithmetic expression: ";        //This prompts the user to enter the expression
     std::getline(std::cin, inputExpression);
     std::vector<std::string> input_vector;
-    tokenize(inputExpression, input_vector);
+    tokenize(inputExpression, input_vector); // Tokenize the input to a vector
     if (input_vector.size() == 0){
         std :: cout << "Please enter a complete expression\n";
         return 0;
     }
     std::vector<std::string> postfix_vector; // Using a vector to allow easier debugging
-    infixToPostfix(input_vector, postfix_vector);
+    infixToPostfix(input_vector, postfix_vector); // Converts infix to postfix
     std::stack<std::string> postfix_stack;
     for (int i = 0; i < postfix_vector.size(); ++i){
         //std :: cout << "At " << i << " " << postfix_vector.at(i) << std::endl;
