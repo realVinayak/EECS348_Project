@@ -11,6 +11,10 @@ int main(){
     std::getline(std::cin, inputExpression);
     std::vector<std::string> input_vector;
     tokenize(inputExpression, input_vector);
+    if (input_vector.size() == 0){
+        std :: cout << "Please enter a complete expression\n";
+        return 0;
+    }
     std::vector<std::string> postfix_vector; // Using a vector to allow easier debugging
     infixToPostfix(input_vector, postfix_vector);
     std::stack<std::string> postfix_stack;
@@ -19,5 +23,5 @@ int main(){
         postfix_stack.push(postfix_vector.at(i));
     }
     std::cout << "Result: " << evaluate_stack(postfix_stack) << std :: endl;
-
+    return 0;
 }

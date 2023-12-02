@@ -45,9 +45,11 @@ void validate_parsed_vector(std::vector<std::string>&vector){
     // set bits on what to look for. NUMBER OPERATOR
     // don't need to set an extra bit for parenthesis since it is always semantically
     // same as a number
-    bool searching_for[2] = {true, true};
+    if (vector.size() == 0)
+        return;
+
     int idx = 0;
-    while (idx < vector.size() - 1){
+    while (idx < (vector.size() - 1)){
         char current = vector[idx][0];
         if (isOperator(current)){
             if (isComputable(vector[idx+1][0]) == true){
@@ -102,13 +104,13 @@ void tokenize(const std::string &raw_expression, std::vector<std::string>&vector
         }
         // Handle pi
         if (raw_expression[i] == 'p' && i < raw_expression.size() - 1 && raw_expression[i + 1] == 'i'){
-            vector_to_use.push_back("3.14");
+            vector_to_use.push_back("3.14159");
             ++i;
             continue;
         }
         // Handle i
         if (raw_expression[i] == 'e'){
-            vector_to_use.push_back("3.14");
+            vector_to_use.push_back("2.71828");
             continue;
         }
         if (raw_expression[i] == '\t' || raw_expression[i] == '\n' || raw_expression[i] == ' ') continue;

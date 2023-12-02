@@ -28,10 +28,12 @@ double do_operation(string the_operator, double num1, double num2) {
 
         double result = (num2 / num1);
         if (!isfinite(result)){
-            std::cerr << "Invalid result from division\n";
+            std::cerr << "Error: Division by zero\n";
             exit(1);
+        }else{
+            return result;
         }
-        return result;
+
     }
 
 	if (the_operator == "+")
@@ -42,7 +44,7 @@ double do_operation(string the_operator, double num1, double num2) {
         if ((int)num1 != 0){
             return ((int)num2 % (int)num1);
         }
-        std::cerr << "Invalid result from division\n";
+        std::cerr << "Error: Modulus by zero\n";
         exit(1);
     }
 
@@ -84,7 +86,7 @@ double evaluate_stack(stack<string> postfix_stack) {
 			current_operator = current_item;
             if (current_operator == "u"){
                 if (value_stack.empty()){
-                    std::cerr << "Error in evaluating expression\n";
+                    std::cerr << "Error: Input is invalid.\n";
                     exit(1);
                 }
                 result = -1*stod(value_stack.top());
@@ -93,7 +95,7 @@ double evaluate_stack(stack<string> postfix_stack) {
             }else if (current_operator == "p")
             {
                 if (value_stack.empty()){
-                    std::cerr << "Error in evaluating expression\n";
+                    std::cerr << "Error: Input is invalid.\n";
                     exit(1);
                 }
                 result = stod(value_stack.top());
@@ -102,7 +104,7 @@ double evaluate_stack(stack<string> postfix_stack) {
             }else{
                 //Pop top two numbers
                 if (value_stack.size() < 2){
-                    std::cerr << "Error in evaluating expression\n";
+                    std::cerr << "Error: Input is invalid.\n";
                     exit(1);
                 }
                 numbers_pending_operation -= 2;
@@ -124,7 +126,7 @@ double evaluate_stack(stack<string> postfix_stack) {
 	}
 
     if (numbers_pending_operation > 0){
-       std :: cerr << "Error: Invalid expression. Please check if operators are defined for sequences\n";
+       std :: cerr << "Error: Input is invalid.\n";
        exit(1);
     }
 

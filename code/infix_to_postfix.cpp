@@ -80,8 +80,8 @@ void infixToPostfix(std::vector<std::string> &infix_array, std::vector<std::stri
             response = handleToken(token);
         }
         if (response != 0){
-            std::cerr << "Error in generating Reverse Polish Notation\n";
-            exit(-1);
+            std::cerr << "Error: Input is invalid\n";
+            exit(1);
         }
         prevToken = token;
     }
@@ -90,8 +90,8 @@ void infixToPostfix(std::vector<std::string> &infix_array, std::vector<std::stri
     while (!stack.empty()) {
         if (stack.top() == "(")
         {
-            std::cerr << "Error in generating Reverse Polish Notation. Didn't expect trailing (\n";
-            exit(-1);
+            std::cerr << "Error: Input is invalid\n";
+            exit(1);
         }
         postfix.push_back(stack.top());
         stack.pop();
